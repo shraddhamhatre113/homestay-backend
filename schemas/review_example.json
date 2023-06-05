@@ -1,0 +1,19 @@
+{
+    "id": "362865132",
+    "date": {
+      "$date": {
+        "$numberLong": "1545886800000"
+      }
+    },
+    "property_id": "10006546",
+    "reviewer_id": "208880077",
+    "reviewer_name": "Thomas",
+    "comments": "Very helpful hosts. Cooked traditional...",
+    "review_scores_accuracy": 9,
+    "review_scores_cleanliness": 9,
+    "review_scores_checkin": 10,
+    "review_scores_communication": 10,
+    "review_scores_location": 10,
+    "review_scores_value": 9,
+    "review_scores_rating": 89
+  }

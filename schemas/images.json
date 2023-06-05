@@ -1,0 +1,11 @@
+{
+    "id": {
+      "type": "String"
+    },
+    "medium_url": {
+      "type": "String"
+    },
+    "picture_url": {
+      "type": "String"
+    }
+  }

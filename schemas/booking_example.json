@@ -1,0 +1,41 @@
+{
+    "id":"84dd3b20-a556-4b3a-bc77-d5449c0a58cd",
+    "property_id":"12323424",
+    "start_date":"2019-04-03",
+    "end_date":"2019-04-05",
+    "customer_id":"32424242",
+    "traveler":{
+      "first_name":"John",
+      "last_name":"Doe",
+      "occupancy":{
+        "adults":2,
+        "children": 2
+      }
+    },
+    "room_rate":{
+        "amount":552,
+        "additional_charges":20,
+        "deposit":200,
+        "currency":"USD",
+        "VAT": 50
+    },
+    "status":"ACCEPTED",
+    "payment":{
+      "type":"PAYMENT_CARD",
+      "payment_card_parameters":{
+        "card_type":"VI",
+        "card_number":"---PAN---",
+        "cardholder_name":"James Carter",
+        "expiration_month":"10",
+        "expiration_year":"2016",
+        "cvc":"---CVN---"
+      },
+      "billing_address":{
+        "street":"10 Main St.",
+        "city":"Cambridge",
+        "province":"MA",
+        "postal_code":"01234",
+        "country":"US"
+      }
+    }
+  }
