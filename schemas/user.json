@@ -2,6 +2,12 @@
     "id": {
       "type": "String"
     },
+    "email":{
+      "type":"String"
+    },
+    "password":{
+      "type":"String"
+    },
     "first_name": {
       "type": "String"
     },
