@@ -1,6 +1,6 @@
 const express = require('express');
 const userRoutes = require('./server/user/user.route');
-
+const profileRoutes = require('./server/profile/profile.router');
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -13,7 +13,7 @@ router.get('/health-check', (req, res) =>
 
 // mount user routes at /users
 router.use('/users', userRoutes);
-
+router.use('/profiles', profileRoutes);
 
 
 module.exports = router;

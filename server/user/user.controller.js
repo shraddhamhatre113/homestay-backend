@@ -28,8 +28,8 @@ function get(req, res) {
  */
 function create(req, res, next) {
   const user = new User({
-    username: req.body.username,
-    mobileNumber: req.body.mobileNumber
+    email: req.body.email,
+    password: req.body.password
   });
 
   user.save()
@@ -45,8 +45,19 @@ function create(req, res, next) {
  */
 function update(req, res, next) {
   const user = req.user;
-  user.username = req.body.username;
-  user.mobileNumber = req.body.mobileNumber;
+  User.get(id)
+    .then((user) => {
+      user.dob = req.body.dob;
+      user.first_name = req.body.first_name;
+      user.last_name = req.body.last_name;
+      user.gender = req.body.gender;
+      user.hobbies = req.body.hobbies;
+      user.interest = req.body.interest;
+      user.about = req.body.about;
+      user.save()
+      .then(savedUser => res.json(savedUser))
+      .catch(e => next(e));
+    });
 
   user.save()
     .then(savedUser => res.json(savedUser))

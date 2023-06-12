@@ -1,5 +1,4 @@
 const express = require('express');
-const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const compress = require('compression');
@@ -13,12 +12,10 @@ const winstonInstance = require('./winston');
 const routes = require('../index.route');
 const config = require('./config');
 const APIError = require('../server/helpers/APIError');
+const fileUpload = require('express-fileupload');
 
 const app = express();
 
-if (config.env === 'development') {
-  app.use(logger('dev'));
-}
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
@@ -27,8 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(compress());
 app.use(methodOverride());
-
-
+app.use(fileUpload())
 
 // enable detailed API logging in dev env
 if (config.env === 'development') {

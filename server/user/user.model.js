@@ -7,14 +7,11 @@ const APIError = require('../helpers/APIError');
  * User Schema
  */
 const UserSchema = new mongoose.Schema({
-  id: {
+  email: {
     type: String
   },
-  email:{
-    type:String
-  },
-  password:{
-    type:String
+  password: {
+    type: String
   },
   first_name: {
     type: String
@@ -22,7 +19,7 @@ const UserSchema = new mongoose.Schema({
   last_name: {
     type: String
   },
-  DOB: {
+  dob: {
     type: Date
   },
   gender: {
@@ -40,8 +37,9 @@ const UserSchema = new mongoose.Schema({
   response_time: {
     type: String
   },
-  picture_id: {
-    type: String
+  image: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Image"
   },
   neighbourhood: {
     type: String
@@ -65,50 +63,67 @@ const UserSchema = new mongoose.Schema({
   },
   properties: {
     type: [
-      String
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Property'
+      }
     ]
   },
   property_bookings: {
     past_booking: {
       type: [
-        String
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Booking'
+        }
       ]
     },
     current_bookings: {
       type: [
-        String
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Booking'
+        }
       ]
     },
     rejected_bookings: {
       type: [
-        String
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Booking'
+        }
       ]
     }
   },
   guest_booking: {
     past_booking: {
       type: [
-        String
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Booking'
+        }
       ]
     },
     current_bookings: {
       type: [
-        String
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Booking'
+        }
       ]
     },
     cancelled_bookings: {
       type: [
-        String
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Booking'
+        }
       ]
     }
   },
-  address_id: {
-    type: String
-  },
-  transactions: {
-    type: [
-      String
-    ]
+  address: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Address"
   }
 });
 
@@ -135,8 +150,10 @@ UserSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   get(id) {
-    return this.findById(id)
-      .exec()
+    const nid = new mongoose.Types.ObjectId(id);
+    return this.findOne(nid)
+      .populate('address')
+      .populate('image')
       .then((user) => {
         if (user) {
           return user;
@@ -158,7 +175,22 @@ UserSchema.statics = {
       .skip(+skip)
       .limit(+limit)
       .exec();
-  }
+  },
+  update(data, id) {
+  
+      const nid = id? new mongoose.Types.ObjectId(id):null;
+
+      return this.findOneAndUpdate(nid, data, {upsert: true}).then((user) => {
+        if (user) {
+          return user;
+        }
+        const err = new APIError(
+          "No such user exists!",
+          httpStatus.NOT_FOUND
+        );
+        return Promise.reject(err);
+      });
+  },
 };
 
 /**
