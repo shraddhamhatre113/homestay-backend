@@ -195,7 +195,7 @@ UserSchema.statics = {
   update(data, id) {
   
       const nid = id? new mongoose.Types.ObjectId(id):null;
-
+    
       return this.findOneAndUpdate(nid, data, {upsert: true}).then((user) => {
         if (user) {
           return user;

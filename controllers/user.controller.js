@@ -27,8 +27,8 @@ const signup = async (req, res, next) => {
     }
     const newUser = await User.create({
 
-      firstName,
-      lastName,
+      first_name: firstName,
+      last_name: lastName,
       email,
       password
 
@@ -62,7 +62,7 @@ const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate("address").populate("image");
     if (!user || !(await user.authenticate(password))) {
       throw createError(401, "Wrong email or password!")
     }
