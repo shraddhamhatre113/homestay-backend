@@ -1,26 +1,23 @@
+/* eslint-disable no-console */
 import mongoose from 'mongoose';
-
 import express from 'express';
+import Promise from 'bluebird'; // eslint-disable-line no-global-assign
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compress from 'compression';
 import methodOverride from 'method-override';
-
 import httpStatus from 'http-status';
 import expressValidation from 'express-validation';
-
-
-import routes from './routes/index.route.js';
+import router from './routes/index.route.js';
 import config from './config/config.js';
 import APIError from './helpers/APIError.js';
+// eslint-disable-next-line import/imports-first
 import fileUpload from 'express-fileupload';
 
-
-
-
 // make bluebird default Promise
-import Promise from 'bluebird'; // eslint-disable-line no-global-assign
-import cors from 'cors';
+
+// import  routes from './routes/user.route.js';
 
 const app = express();
 
@@ -32,8 +29,9 @@ mongoose.Promise = Promise;
 const mongoUri = config.mongo.host;
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 });
+
 mongoose.connection.on('error', () => {
   throw new Error(`unable to connect to database: ${mongoUri}`);
 });
@@ -43,12 +41,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(compress());
 app.use(methodOverride());
-app.use(fileUpload())
+app.use(fileUpload());
 app.use(cors({
-  origin:"http://localhost:5173",
-  optionsSuccessStatus:200,
+  origin: 'http://localhost:5173',
+  optionsSuccessStatus: 200,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"]
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
 })
 );
 
@@ -56,7 +54,7 @@ app.use(cors({
 
 
 // mount all routes on /api path
-app.use('/api', routes);
+app.use('/api', router);
 
 // if error is not an instanceOf APIError, convert it.
 app.use((err, req, res, next) => {
@@ -78,8 +76,6 @@ app.use((req, res, next) => {
   return next(err);
 });
 
-
-
 // error handler, send stacktrace only during development
 app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
   res.status(err.status).json({
@@ -89,9 +85,10 @@ app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
 );
 
 
-  app.listen(config.port, () => {
-    console.info(`server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
-  });
+app.listen(config.port, () => {
+  console.info(`Server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
+  console.log('Connection to DB successful!');
+});
 
 
 export default app;

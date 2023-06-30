@@ -18,7 +18,7 @@
       2,
       "nofunc"
     ],
-    // TODO: turn on later
+    //TODO: turn on later
     "comma-dangle": [
       0
     ],
@@ -36,10 +36,10 @@
     "node": true,
     "mocha": true
   },
-  "parserOptions": {
+   "parserOptions": {
     "ecmaVersion": 6,
-    "sourceType": "module"
-  },
+     "sourceType": "module"
+   },
   "extends": [
     "eslint:recommended",
     "airbnb-base"

@@ -1,7 +1,13 @@
 import express from 'express';
 
-import  propertyController from '../controllers/property.controller.js';
+import { createProperty, deleteProperty, getAllProperty, getPropertyDetail, searchProperties } from '../controllers/property.controller.js';
 
-const router = express.Router(); // eslint-disable-line new-cap
-router.post('/', propertyController.createProperty);
-export default router;
+const propertyRoutes = express.Router(); // eslint-disable-line new-cap
+propertyRoutes.post('/', createProperty)
+      .get('/search', searchProperties)
+      .get('/', getAllProperty)    
+      .get('/:id', getPropertyDetail)
+      .delete('/:id', deleteProperty);
+      
+
+export default propertyRoutes;

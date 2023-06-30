@@ -1,6 +1,7 @@
 import Joi from 'joi';
 
-// require and configure dotenv, will load vars in .env in PROCESS.ENV
+
+// eslint-disable-next-line import/newline-after-import
 import dotenv from 'dotenv';
 dotenv.config();
 // define validation for all the env vars
@@ -19,7 +20,7 @@ const envVarsSchema = Joi.object({
   JWT_SECRET: Joi.string().required()
     .description('JWT Secret required to sign'),
   MONGO_HOST: Joi.string().required()
-    .description('Mongo DB host url'),
+    .description('mongodb'),
   MONGO_PORT: Joi.number()
     .default(27017)
 }).unknown()

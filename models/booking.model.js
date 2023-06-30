@@ -1,100 +1,98 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
-    property:  {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Property'
+  propertyBook: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Property",
+  },
+  start_date: {
+    type: Date,
+  },
+  end_date: {
+    type: Date,
+  },
+  customer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  traveler: {
+    first_name: {
+      type: String,
+    },
+    last_name: {
+      type: String,
+    },
+    occupancy: {
+      adults: {
+        type: Number,
       },
-      start_date: {
-        type: Date
+      children: {
+        type: Number,
       },
-      end_date: {
-        type: Date
+    },
+  },
+  room_rate: {
+    amount: {
+      type: Number,
+    },
+    additional_charges: {
+      type: Number,
+    },
+    deposit: {
+      type: Number,
+    },
+    currency: {
+      type: String,
+    },
+    VAT: {
+      type: Number,
+    },
+  },
+  status: {
+    type: String,
+  },
+  payment: {
+    type: {
+      type: String,
+    },
+    payment_card_parameters: {
+      card_type: {
+        type: String,
       },
-      customer:  {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+      card_number: {
+        type: String,
       },
-      traveler: {
-        first_name: {
-          type: String
-        },
-        last_name: {
-          type: String
-        },
-        occupancy: {
-          adults: {
-            type: Number
-          },
-          children: {
-            type: Number
-          }
-        }
+      cardholder_name: {
+        type: String,
       },
-      room_rate: {
-        amount: {
-          type: Number
-        },
-        additional_charges: {
-          type: Number
-        },
-        deposit: {
-          type: Number
-        },
-        currency: {
-          type: String
-        },
-        VAT: {
-          type: Number
-        }
+      expiration_month: {
+        type: Date,
       },
-      status: {
-        type: String
+      expiration_year: {
+        type: Date,
       },
-      payment: {
-        type: {
-          type: String
-        },
-        payment_card_parameters: {
-          card_type: {
-            type: String
-          },
-          card_number: {
-            type: String
-          },
-          cardholder_name: {
-            type: String
-          },
-          expiration_month: {
-            type: Date
-          },
-          expiration_year: {
-            type: Date
-          },
-          cvc: {
-            type: String
-          }
-        },
-        billing_address: {
-          street: {
-            type: String
-          },
-          city: {
-            type: String
-          },
-          province: {
-            type: String
-          },
-          postal_code: {
-            type: Date
-          },
-          country: {
-            type: String
-          }
-        }
-      }
-    }
-  
-);
+      cvc: {
+        type: String,
+      },
+    },
+    billing_address: {
+      street: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      province: {
+        type: String,
+      },
+      postal_code: {
+        type: Date,
+      },
+      country: {
+        type: String,
+      },
+    },
+  },
+});
 
-export default  mongoose.model('Booking', bookingSchema);
+export default mongoose.model("Booking", bookingSchema);

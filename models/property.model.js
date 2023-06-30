@@ -38,7 +38,7 @@ const propertySchema = new mongoose.Schema({
   guests_included: { type: Number },
   images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }],
   host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  address: { type: mongoose.Schema.Types.ObjectId, ref: 'Address' },
+  address_prop: { type: mongoose.Schema.Types.ObjectId, ref: 'Address' },
   booked_dates: [{ type: Date }],
   review_scores: {
     review_scores_accuracy: { type: Number },
@@ -52,4 +52,5 @@ const propertySchema = new mongoose.Schema({
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
 });
 
-export default mongoose.model('Property', propertySchema);
+const Property = mongoose.model('Property', propertySchema);
+export default Property;
