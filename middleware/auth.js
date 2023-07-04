@@ -33,4 +33,24 @@ const protect = function () {
   };
 };
 
+// role-based access control
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    // roles ['admin', 'user']
+    try {
+      // check if the user role is in the roles array
+      if (!roles.includes(req.user.role)) {
+        throw createError(
+          403,
+          `User role ${req.user.role} is not allowed to access this route`
+        );
+      }
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+
 export  {protect};

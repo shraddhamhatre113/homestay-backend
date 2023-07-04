@@ -28,7 +28,7 @@ export const createBooking = async( req, res, next ) => {
       return res.status(404).json({ error: 'Property not found' });
     }
     const booking = new Booking({
-      propertyB:property,
+      property: propertyB,
       start_date,
       end_date,
       customer,

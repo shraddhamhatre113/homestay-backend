@@ -65,20 +65,44 @@ const bookingSchema = new mongoose.Schema({
       card_type: {
         type: String,
       },
-      card_number: {
+      customer:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      guest_name: {
+        first_name: {
+          type: String
+        },
+        last_name: {
+          type: String
+        },
+        occupancy: {
+          adults: {
+            type: Number
+          },
+          children: {
+            type: Number
+          }
+        }
+      },
+      room_rate: {
+        amount: {
+          type: Number
+        },
+        additional_charges: {
+          type: Number
+        },
+        deposit: {
+          type: Number
+        },
+        currency: {
+          type: String
+        },
+      },
+      status: {
         type: String,
-      },
-      cardholder_name: {
-        type: String,
-      },
-      expiration_month: {
-        type: Date,
-      },
-      expiration_year: {
-        type: Date,
-      },
-      booking_date:{
-        type: String
+        enum: ['pending', 'confirmed', 'cancelled', 'accepted', 'rejected'],
+        default: 'pending',
       },
       billing_address: {
         street: {

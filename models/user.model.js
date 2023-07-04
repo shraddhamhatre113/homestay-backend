@@ -11,15 +11,30 @@ import bookingModel from "./booking.model.js";
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    matches: [/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, 'Please provide a valid email']
   },
   password: {
     type: String,
+    required: [true, 'Please provide your password'],
+    matches: [/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+-?]).{8,}$/, 'Your password should contain at least one Capital letter, one small letter, one number, and one special character. It should be at least 8 characters long.'],
   },
   first_name: {
     type: String,
   },
   last_name: {
     type: String,
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'guest', 'host'],
+    default: 'guest'
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'guest', 'host'],
+    default: 'guest'
   },
   dob: {
     type: Date,
