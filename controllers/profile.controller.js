@@ -1,9 +1,10 @@
 import Address from "../models/address.model.js";
 import Image from "../models/images.model.js";
 import User from "../models/user.model.js";
+import Booking from "../models/booking.model.js"
+import Property from "../models/property.model.js";
 
 function getProfile(req, res) {
-  let profile = {};
   User.get(req.params.userid).then((user) => {
     return res.json(user);
   });
@@ -100,3 +101,46 @@ function uploadProfileImage(req, res, next) {
 
 
 export default { getProfile, updateProfile, uploadProfileImage };
+
+/* -------------------------------------------------------------------------- */
+/*                        Get Host Bookings                                   */
+/* -------------------------------------------------------------------------- */
+export const getHostBookings = async(req, res, next) => {
+  try {
+    const { profileId } = req.params
+    const user = await User.findById(profileId);
+    if(!user.property_bookings || user.properties.length === 0){
+      return res.status(404).json({ message: 'User is not a host'});
+    }
+    const { current_bookings = [], past_bookings = [], rejected_bookings = [] } = user.property_bookings;
+
+    const bookingIds = [...current_bookings, ...past_bookings, ...rejected_bookings];
+
+    const bookings = await Booking.find({ _id: { $in: bookingIds} }).populate('propertyB')
+    
+    res.status(200).json({ host_bookings: bookings })
+  } catch (error) {
+    next(error)
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                             Get a guest booking                            */
+/* -------------------------------------------------------------------------- */
+export const getGuestBookings = async(req, res, next) => {
+  try {
+    const { profileId } = req.params
+    const user = await User.findById(profileId);
+
+
+    const { past_booking = [], current_bookings = [], cancelled_bookings = [] } = user.guest_booking;
+    const bookingIds = [...past_booking, ...current_bookings, ...cancelled_bookings]
+
+    const bookings = await Booking.find({ _id: { $in: bookingIds} })
+
+    res.json({guest_bookings: bookings})
+  } catch (error) {
+    next(error)
+    
+  }
+}

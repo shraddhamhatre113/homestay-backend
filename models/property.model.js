@@ -1,5 +1,5 @@
-
 import mongoose from 'mongoose';
+
 
 const propertySchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -37,7 +37,12 @@ const propertySchema = new mongoose.Schema({
   extra_people: { type: Number },
   guests_included: { type: Number },
   images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }],
-  host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
+  host: { 
+    id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    email: { type: String }
+  },
+
   address_prop: { type: mongoose.Schema.Types.ObjectId, ref: 'Address' },
   booked_dates: [{ type: Date }],
   review_scores: {

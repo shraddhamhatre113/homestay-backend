@@ -1,6 +1,9 @@
 import Booking from  '../models/booking.model.js';
 import Property from '../models/property.model.js';
 
+import User from '../models/user.model.js'
+
+
 
 
 /* -------------------------------------------------------------------------- */
@@ -19,12 +22,13 @@ export const createBooking = async( req, res, next ) => {
       payment
     } = req.body;
 
-    const propertyBook = await Property.findById(propertyId);
-    if (!propertyBook) {
+
+    const propertyB = await Property.findById(property);
+    if (!propertyB) {
       return res.status(404).json({ error: 'Property not found' });
     }
     const booking = new Booking({
-      propertyBook:property,
+      propertyB:property,
       start_date,
       end_date,
       customer,
@@ -36,12 +40,27 @@ export const createBooking = async( req, res, next ) => {
 
     await booking.save();
 
+    const user = await User.findById(customer);
+    if(!user){
+      return res.status(404).json({error: 'User not found.'})
+
+
+
+    if(user.is_host){
+      
+      user.property_bookings.current_bookings.push(booking._id);      
+    }else{
+      user.guest_booking.current_bookings.push(booking._id)
+    }
+
+    await user.save()
     return res.status(201).json({ message: 'Booking created successfully', booking });
   } catch (error) {
    
     next(error)
   }
 };
+
 
 /* -------------------------------------------------------------------------- */
 /*               Controller function to accept a booking request              */
@@ -131,3 +150,55 @@ export const updateBookingPayment = async(req, res, next) => {
 
 
 }
+
+// /* -------------------------------------------------------------------------- */
+// /*                              Get Host Bookings                              */
+// /* -------------------------------------------------------------------------- */
+
+// export const getHostBookings = async(req, res, next) => {
+//   try {
+//     const {profileId} = req.params;
+//     const bookings = await Booking.find({customer:profileId});
+
+//     res.status(200).json(bookings)
+//   } catch (error) {
+//     next(error)
+//   }
+// }
+
+// /* -------------------------------------------------------------------------- */
+// /*                         Create A New Guest Booking                         */
+// /* -------------------------------------------------------------------------- */
+
+// export const createGuestBooking = async(req, res, next) => {
+//   try {
+//     const { userID } = req.params;
+//     const { bookingId} = req.body;
+
+//     const user = await User.get(userID);
+
+//     user.guest_booking.current_bookings.push(bookingId);
+//     const savedUser = await user.save();
+//     res.json({message: 'Guest booking created successfully!', user: savedUser})
+//   } catch (error) {
+//     next(error)
+//   }
+// };
+
+// Cancel 
+
+// /* -------------------------------------------------------------------------- */
+// /*                             Get Guest Bookings                             */
+// /* -------------------------------------------------------------------------- */
+
+
+// export const getGuestBookings = async(req, res, next) => {
+//   try {
+//     const {profileId} = req.params;
+//     const bookings = await Booking.find({guest:profileId});
+
+//     res.status(200).json(bookings)
+//   } catch (error) {
+//     next(error)
+//   }
+// }

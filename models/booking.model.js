@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
-  propertyBook: {
+
+  propertyB: {
+
     type: mongoose.Schema.Types.ObjectId,
     ref: "Property",
   },
@@ -15,6 +17,13 @@ const bookingSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+
+  host: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+
+
   traveler: {
     first_name: {
       type: String,

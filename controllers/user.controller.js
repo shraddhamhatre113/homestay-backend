@@ -30,7 +30,8 @@ const signup = async (req, res, next) => {
       first_name: firstName,
       last_name: lastName,
       email,
-      password
+      password,
+      role
 
     })
 
