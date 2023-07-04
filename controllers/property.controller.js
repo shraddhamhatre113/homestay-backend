@@ -1,18 +1,10 @@
-import Property from "../models/property.model.js";
+import Property from '../models/property.model.js';
+import Booking from '../models/booking.model.js';
+import createError from 'http-errors';
 
-import APIError from "../helpers/APIError.js";
-import httpStatus from 'http-status'
-
-
-/* -------------------------------------------------------------------------- */
-/*                               Create Property                              */
-/* -------------------------------------------------------------------------- */
-export const createProperty = async (req, res, next) => {
-  const propertyData = req.body;
+export async function createProperty(req, res, next) {
   try {
-
-    const { userId } = req.params
-
+    const propertyData = req.body;
 
     // Create a new property object using the Property model
     const property = new Property(propertyData);
@@ -20,10 +12,9 @@ export const createProperty = async (req, res, next) => {
     // Save the property to the database
     await property.save();
 
-
     const user = await User.findById(userId);
     if(user.properties.length > 0){
-      user.is_host = true;
+      user.is_host = true;createPro
       user.role === 'host'
       await user.save()
     }
@@ -100,7 +91,7 @@ export const searchProperties = async(req, res, next) => {
     maxPrice, 
     minBedrooms, 
     maxBedrooms,
-    minBathrooms,
+    minBathrooms,//
     maxBathrooms, 
     minBeds, 
     maxBeds, 
@@ -194,99 +185,66 @@ export const getPropertyPreview = async(req, res, next) => {
     next(error)
   }
 }
-=======
+
+    
+
+/* -------------------------- PUT  /properties/:pid ------------------------- */
+
+export async function updateProperty(req, res, next) {
+  try {
+    const { pid } = req.params;
+    const propertyData = req.body;
+
+    // Find the property by id and update it with the received data (propertyData)
+    const property = await Property.findById(pid)
+    if (!property) {
+      return createError(404, 'Property does not exist.');
     }
 
-    res.status(200).json({ message: "Property deleted.", deletedProp });
+    const updateResult = await Property.findByIdAndUpdate(pid, propertyData, { new: true });
+
+
+    res.status(200).json({
+      message: 'Property updated successfully!',
+
+      property: updateResult
+    });
   } catch (error) {
     next(error);
-  }
-};
-/* -------------------------------------------------------------------------- */
-/*                             Get All Properties                             */
-/* -------------------------------------------------------------------------- */
-export const getAllProperty = async (req, res, next) => {
-  try {
-    const properties = await Property.find();
-    if (!properties) {
-      return res.status(404).json({ message: "No properties found." });
-    }
-
-    res.status(200).json(properties);
-  } catch (error) {
-    next(error);
-  }
-};
-
-/* -------------------------------------------------------------------------- */
-/*                              Search Properties                             */
-/* -------------------------------------------------------------------------- */
-
-export const searchProperties = async(req, res, next) => {
-  const { 
-    minPrice, 
-    maxPrice, 
-    minBedrooms, 
-    maxBedrooms,
-    minBathrooms,
-    maxBathrooms, 
-    minBeds, 
-    maxBeds, 
-    propertyType, 
-    amenities
-  } = req.query;
-
-  const filters = {}
-
-  //Price filter
-  if(minPrice && maxPrice){
-    filters.price = {$gte:(minPrice), $lte:maxPrice};
-  }else if(minPrice){
-    filters.price = {$gte: minPrice};
-  }else if(maxPrice){
-    filters.price = {$lte: maxPrice}
-  }
-
-  //Bedrooms filter
-  if(minBedrooms && maxBedrooms){
-    filters.bedrooms = {$gte: minBedrooms, $lte: maxBedrooms};
-  }else if(minBedrooms){
-    filters.bedrooms = {$gte: minBedrooms};
-  }else if(maxBedrooms){
-    filters.bedrooms = {$lte: maxBedrooms}
-  }
- //Bathrooms filter
-  if(minBathrooms && maxBathrooms){
-    filters.bathrooms = {$gte: minBathrooms, $lte: maxBathrooms};
-  }else if(minBathrooms){
-    filters.bathrooms = {$gte: minBathrooms};
-  }else if(maxBathrooms){
-    filters.bathrooms = {$lte: maxBathrooms}
-  }
-//Beds filter
-  if(minBeds && maxBeds){
-    filters.beds = {$gte: minBeds, $lte: maxBeds};
-  }else if(minBeds){
-    filters.beds = {$gte: minBeds};
-  }else if(maxBeds){
-    filters.beds = {$lte: maxBeds}
-  }
-  //Property type filter
-  if(propertyType){
-    filters.property_type = propertyType;
-  }
-  //Amenities filter
-  if(amenities){
-    filters.amenities = {$all: amenities.split(',')};   
-  }
-
-
-
-  try {
-    const filteredProps = await Property.find(filters);
-    res.status(200).json({ filteredProps })
-  } catch (error) {
-    next(error)
   }
 }
+
+/* -------------------------- GET /properties/:pid -------------------------- */
+
+export async function getPropertyByBookingHistory(req, res, next) {
+  try {
+    const { pid } = req.params;
+
+    // Filter the booking by property by id
+    const propertyBookings = Booking.filter(booking => booking.propertyId === pid);
+
+    if (!propertyBookings) {
+      return createError(404, 'Property bookings not found.');
+    }
+
+    // map booking to summary format
+    const propertyBookingsSummary = propertyBookings.map(booking => ({
+      guestName: booking.guest_name,
+      dates: `${booking.start_date} to ${booking.end_date}`,
+      price: booking.room_rate.amount,
+      status: booking.status,
+    }));
+
+
+    res.status(200).json({
+      propertyBookingsSummary,
+      message: 'Property bookings retrieved successfully!'
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+
 

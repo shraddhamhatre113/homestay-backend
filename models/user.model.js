@@ -1,42 +1,43 @@
-import Promise from 'bluebird';
-import mongoose from 'mongoose';
-import httpStatus from 'http-status';
-import APIError from'../helpers/APIError.js';
-import bcrypt from 'bcrypt';
+import Promise from "bluebird";
+import mongoose from "mongoose";
+import httpStatus from "http-status";
+import APIError from "../helpers/APIError.js";
+import bcrypt from "bcrypt";
+import bookingModel from "./booking.model.js";
 
 /**
  * User Schema
  */
 const UserSchema = new mongoose.Schema({
   email: {
-    type: String
+    type: String,
   },
   password: {
-    type: String
+    type: String,
   },
   first_name: {
-    type: String
+    type: String,
   },
   last_name: {
-    type: String
+    type: String,
   },
   dob: {
-    type: Date
+    type: Date,
   },
   gender: {
-    type: String
+    type: String,
   },
   hobbies: {
-    type: String
+    type: String,
   },
   interest: {
-    type: String
+    type: String,
   },
   about: {
-    type: String
+    type: String,
   },
   response_time: {
-    type: String
+    type: String,
   },
   host:{
     type: mongoose.Schema.Types.ObjectId,
@@ -53,92 +54,76 @@ const UserSchema = new mongoose.Schema({
   },
   image: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Image"
+    ref: "Image",
   },
   neighbourhood: {
-    type: String
+    type: String,
   },
   response_rate: {
-    type: Number
+    type: Number,
   },
   is_superhost: {
-    type: Boolean
+    type: Boolean,
   },
   has_profile_pic: {
-    type: Boolean
+    type: Boolean,
   },
   identity_verified: {
-    type: Boolean
+    type: Boolean,
   },
   verifications: {
-    type: [
-      String
-    ]
+    type: [String],
   },
-  properties: {
-    type: [
+  properties: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Property",
+    },
+  ],
+  property_bookings: {
+    past_booking: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Property'
-      }
-    ]
-  },
-  property_bookings: {
-    past_booking: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Booking'
-        }
-      ]
-    },
-    current_bookings: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Booking'
-        }
-      ]
-    },
-    rejected_bookings: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Booking'
-        }
-      ]
-    }
+        ref: "Booking",
+      },
+    ],
+    current_bookings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booking",
+      },
+    ],
+    rejected_bookings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booking",
+      },
+    ],
   },
   guest_booking: {
-    past_booking: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Booking'
-        }
-      ]
-    },
-    current_bookings: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Booking'
-        }
-      ]
-    },
-    cancelled_bookings: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Booking'
-        }
-      ]
-    }
+    past_booking: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booking",
+      },
+    ],
+    current_bookings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booking",
+      },
+    ],
+    cancelled_bookings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booking",
+      },
+    ],
   },
   address: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Address"
-  }
+    ref: "Address",
+  },
 });
 
 /**
@@ -152,28 +137,28 @@ const UserSchema = new mongoose.Schema({
  * Methods
  */
 UserSchema.method({
-  async authenticate(plainTextPass){
-    return await bcrypt.compare(plainTextPass, this.password)
-  }
+  async authenticate(plainTextPass) {
+    return await bcrypt.compare(plainTextPass, this.password);
+  },
 });
 
-UserSchema.pre('save', async function(next){
+UserSchema.pre("save", async function (next) {
   try {
-      if(!this.isModified('password')) return next();
+    if (!this.isModified("password")) return next();
 
-      const salt = await bcrypt.genSalt(10);
-      this.password = await bcrypt.hash(this.password, salt)
-      next()
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
   } catch (error) {
-      next(error)
+    next(error);
   }
-})
+});
 
 /**
  * Statics
  */
 UserSchema.statics = {
-  /**
+  /*
    * Get user
    * @param {ObjectId} id - The objectId of user.
    * @returns {Promise<User, APIError>}
@@ -181,13 +166,21 @@ UserSchema.statics = {
   get(id) {
     const nid = new mongoose.Types.ObjectId(id);
     return this.findOne(nid)
-      .populate('address')
-      .populate('image')
+      .populate("address")
+      .populate("image")
+      .populate("properties")
+      .populate("properties.images")
+      .populate("property_bookings.past_booking")
+      .populate("property_bookings.current_bookings")
+      .populate("property_bookings.rejected_bookings")
+      .populate("guest_booking.past_booking")
+      .populate("guest_booking.current_bookings")
+      .populate("guest_booking.cancelled_bookings")
       .then((user) => {
         if (user) {
           return user;
         }
-        const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
+        const err = new APIError("No such user exists!", httpStatus.NOT_FOUND);
         return Promise.reject(err);
       });
   },
@@ -199,31 +192,22 @@ UserSchema.statics = {
    * @returns {Promise<User[]>}
    */
   list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
-      .sort({ createdAt: -1 })
-      .skip(+skip)
-      .limit(+limit)
-      .exec();
+    return this.find().sort({ createdAt: -1 }).skip(+skip).limit(+limit).exec();
   },
   update(data, id) {
-  
-      const nid = id? new mongoose.Types.ObjectId(id):null;
-    
-      return this.findOneAndUpdate(nid, data, {upsert: true}).then((user) => {
-        if (user) {
-          return user;
-        }
-        const err = new APIError(
-          "No such user exists!",
-          httpStatus.NOT_FOUND
-        );
-        return Promise.reject(err);
-      });
-  }
+    const nid = id ? new mongoose.Types.ObjectId(id) : null;
 
+    return this.findOneAndUpdate(nid, data, { upsert: true }).then((user) => {
+      if (user) {
+        return user;
+      }
+      const err = new APIError("No such user exists!", httpStatus.NOT_FOUND);
+      return Promise.reject(err);
+    });
+  },
 };
 
 /**
  * @typedef User
  */
-export default  mongoose.model('User', UserSchema);
+export default mongoose.model("User", UserSchema);
