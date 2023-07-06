@@ -5,13 +5,17 @@ import { createProperty } from '../controllers/property.controller.js';
 
 import { protect } from '../middleware/auth.js';
 
+import { signInValidation, userValidation } from '../validations/user.js';
+
 const userRoutes = express.Router(); // eslint-disable-line new-cap
 
-userRoutes.route('/signup').post(signup);
+router.route('/signup')
+  .post(validator(userValidation), signup)
 
 userRoutes.route('/signin').post(signin);
 
-userRoutes.post('/properties/:userId', createProperty)
+router.route('/signin')
+  .post(validator(signInValidation),  signin)
 
 
 

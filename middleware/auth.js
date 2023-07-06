@@ -53,4 +53,4 @@ export const restrictTo = (...roles) => {
 };
 
 
-export  {protect};
+export default protect;
