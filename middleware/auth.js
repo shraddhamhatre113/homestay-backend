@@ -4,7 +4,7 @@ import User  from "../models/user.model.js";
 import createError from  "http-errors";
 
 //middleware function to protect routes by verifying tokens
-const protect = function () {
+export const protect = function () {
   console.log('protect middleware');
   return async (req, res, next) => {
     console.log(req.cookies.access_token);
@@ -52,5 +52,3 @@ export const restrictTo = (...roles) => {
   };
 };
 
-
-export default protect;
