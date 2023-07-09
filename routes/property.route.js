@@ -3,7 +3,7 @@ import express from 'express';
 import { createProperty, deleteProperty, getAllProperty, getPropertyDetail, getPropertyPreview, searchProperties, getPropertyByBookingHistory, updateProperty } from '../controllers/property.controller.js';
 import { propertyValidation } from '../validations/property.js';
 import { protect } from '../middleware/auth.js';
-import { validate } from '../validations/validate.js';
+import {validate}  from '../validations/validate.js';
 
 const propertyRoutes = express.Router(); // eslint-disable-line new-cap
 propertyRoutes.post('/', createProperty)
