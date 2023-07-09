@@ -63,16 +63,10 @@ const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).populate("address").populate("image").populate("properties.images")
-    .populate("property_bookings.past_booking")
-    .populate("property_bookings.current_bookings")
-    .populate("property_bookings.rejected_bookings")
-    .populate("guest_booking.past_booking")
-    .populate("guest_booking.current_bookings")
-    .populate("guest_booking.cancelled_bookings")
-    .populate("property_bookings.past_booking.customer");
+    const user = await User.findOne({ email }).populate("address").populate("image");
     if (!user || !(await user.authenticate(password))) {
-      throw createError(401, "Wrong email or password!")
+      res.status(401).json( "Wrong email or password!")
+      return;
     }
 
     const token = await createToken({
