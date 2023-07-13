@@ -47,13 +47,7 @@ app.use(cookieParser());
 app.use(compress());
 app.use(methodOverride());
 app.use(fileUpload());
-app.use(cors({
-  origin: 'https://bookme-lhvh.onrender.com/',
-  optionsSuccessStatus: 200,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
-})
-);
+
 
 // enable detailed API logging in dev env
 
