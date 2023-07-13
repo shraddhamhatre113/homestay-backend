@@ -79,7 +79,7 @@ function uploadProfileImage(req, res, next) {
   if (req.files) {
     console.log(req.headers);
     let profilePic = req.files.profileImage.data;
-    const base64Data = profilePic.toString("base64");
+    const base64Data = "data:image/jpeg;base64," + profilePic.toString("base64");
     let imageSaved = {};
     return new Image({
       picture_url: base64Data,

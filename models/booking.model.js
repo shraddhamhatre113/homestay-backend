@@ -51,6 +51,7 @@ const bookingSchema = new mongoose.Schema({
     },
     currency: {
       type: String,
+      default: 'euro'
     },
     VAT: {
       type: Number,

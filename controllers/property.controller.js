@@ -41,17 +41,17 @@ export const getPropertyDetail = async (req, res, next) => {
       .populate("address")
       .populate("images");
 
-      if(property.reviews){
-        const reviewPromises = property.reviews.map(async (review) => {
-          const user = await User.findById(review.reviewer)
-            .populate("address")
-            .populate("image");
-          review.reviewer = user;
-          return review;
-        });
-        const all = await Promise.all(reviewPromises);
-        property.reviews = all;
-  }
+    if (property.reviews) {
+      const reviewPromises = property.reviews.map(async (review) => {
+        const user = await User.findById(review.reviewer)
+          .populate("address")
+          .populate("image");
+        review.reviewer = user;
+        return review;
+      });
+      const all = await Promise.all(reviewPromises);
+      property.reviews = all;
+    }
     if (!property) {
       return res.status(404).json({ error: "Property not found" });
     }
@@ -103,82 +103,70 @@ export const searchProperties = async (req, res, next) => {
   const {
     minPrice,
     maxPrice,
-    minBedrooms,
-    maxBedrooms,
-    minBathrooms, //
-    maxBathrooms,
-    minBeds,
-    maxBeds,
+    bedrooms,
+    bathrooms, //
+    beds,
     propertyType,
-    amenities,
+    rating,
     city,
   } = req.query;
 
-  const filters = {};
+  const filters = {
+  };
 
   //Price filter
   if (minPrice && maxPrice) {
-    filters.price = { $gte: minPrice, $lte: maxPrice };
-  } else if (minPrice) {
-    filters.price = { $gte: minPrice };
-  } else if (maxPrice) {
-    filters.price = { $lte: maxPrice };
+    filters.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
   }
 
   //Bedrooms filter
-  if (minBedrooms && maxBedrooms) {
-    filters.bedrooms = { $gte: minBedrooms, $lte: maxBedrooms };
-  } else if (minBedrooms) {
-    filters.bedrooms = { $gte: minBedrooms };
-  } else if (maxBedrooms) {
-    filters.bedrooms = { $lte: maxBedrooms };
+  if (bedrooms) {
+    filters.bedrooms = { $gte: parseInt(bedrooms) };
   }
   //Bathrooms filter
-  if (minBathrooms && maxBathrooms) {
-    filters.bathrooms = { $gte: minBathrooms, $lte: maxBathrooms };
-  } else if (minBathrooms) {
-    filters.bathrooms = { $gte: minBathrooms };
-  } else if (maxBathrooms) {
-    filters.bathrooms = { $lte: maxBathrooms };
+  if (bathrooms) {
+    filters.bathrooms = { $gte: parseInt(bathrooms) };
   }
   //Beds filter
-  if (minBeds && maxBeds) {
-    filters.beds = { $gte: minBeds, $lte: maxBeds };
-  } else if (minBeds) {
-    filters.beds = { $gte: minBeds };
-  } else if (maxBeds) {
-    filters.beds = { $lte: maxBeds };
-  }
-  //Property type filter
-  if (propertyType) {
-    filters.property_type = propertyType;
-  }
+  // if (beds) {
+  //   filters.beds = { $gte: parseInt(beds) };
+  // }
 
-  //Amenities filter
-  if (amenities) {
-    filters.amenities = { $all: amenities.split(",") };
-  }
-  try {
-    const filteredProps = await Property.find(filters).populate('images')
-    .populate({
-      path: 'address',
-      match: {
-        'city': city
-      }
-    }).limit(10000).then((props)=>{
-     const result= props.filter(prop=>prop.address!=null);
-     const allPrices = result.map(res=>res.price);
-     const maxPrice = Math.max.apply(Math, allPrices);
-     const minPrice = Math.min.apply(Math, allPrices);
 
-      return {
-        properties: result.slice(0,30),
-        total: result.length,
-        minPrice: minPrice,
-        maxPrice: maxPrice
-      }
-    });
+  // //Amenities filter
+  // if (rating) {
+  //   filters.review_scores={}
     
+  //   filters.review_scores.review_scores_rating = { $gte: parseInt(rating) };
+  // }
+  if (propertyType && propertyType.length) {
+    filters.property_type = { $in: propertyType.split(',') };
+  }
+  console.log(filters)
+  try {
+    const filteredProps = await Property.find(filters)
+      .populate("images")
+      .populate({
+        path: "address",
+        match: {
+          city: city,
+        },
+      })
+      .limit(5000)
+      .then((props) => {
+        const result = props.filter((prop) => prop.address != null);
+        const allPrices = result.map((res) => res.price);
+        const maxPrice = Math.max.apply(Math, allPrices);
+        const minPrice = Math.min.apply(Math, allPrices);
+
+        return {
+          properties: result.slice(0, 30),
+          total: result.length,
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+        };
+      });
+
     res.status(200).json(filteredProps);
   } catch (error) {
     next(error);
