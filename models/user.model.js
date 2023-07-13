@@ -105,46 +105,16 @@ const UserSchema = new mongoose.Schema({
       ref: "Property",
     },
   ],
-  property_bookings: {
-    past_booking: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Booking",
-      },
-    ],
-    current_bookings: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Booking",
-      },
-    ],
-    rejected_bookings: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Booking",
-      },
-    ],
-  },
-  guest_booking: {
-    past_booking: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Booking",
-      },
-    ],
-    current_bookings: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Booking",
-      },
-    ],
-    cancelled_bookings: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Booking",
-      },
-    ],
-  },
+  property_bookings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Booking",
+  }],
+  guest_booking: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Booking",
+    }
+  ],
   address: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Address",

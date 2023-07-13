@@ -63,7 +63,7 @@ const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).populate("address").populate("image");
+    const user = await User.findOne({ email }).populate("address").populate("image").populate('guest_booking').populate('property_bookings');
     if (!user || !(await user.authenticate(password))) {
       res.status(401).json( "Wrong email or password!")
       return;
