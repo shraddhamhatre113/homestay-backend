@@ -50,7 +50,7 @@ app.use(fileUpload());
 app.use(cors({
   origin: 'https://bookme-lhvh.onrender.com',
   optionsSuccessStatus: 200,
-  credentials: false,
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 })
 );
