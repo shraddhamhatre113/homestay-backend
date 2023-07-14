@@ -263,3 +263,15 @@ export async function getPropertyByBookingHistory(req, res, next) {
     next(error);
   }
 }
+
+export async function getTopProperties(req, res, next){
+  console.log('topProperty')
+    try{
+      const topProps= await  Property.find({}).sort({'review_scores.review_scores_rating': -1}).populate('images').populate('address').limit(6)
+      console.log(topProps)
+      res.status(200).json(topProps)
+    }catch(e){
+      console.log(e);
+      next(e)
+    }
+}
