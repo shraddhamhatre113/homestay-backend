@@ -53,48 +53,7 @@ export const userValidation = [
             return true;
         }
         ),
-    body('dob')
-        .trim()
-        .escape()
-        .notEmpty()
-        .isDate(),
-        body('gender')
-        .trim()
-        .escape()
-        .notEmpty()
-        .matches(/^(male|female|other)$/),
-    body('hobbies')
-        .trim()
-        .escape()
-        .notEmpty()
-        .matches(/^(music|sports|reading|travelling|cooking|other)$/),
-    body('interest')
-        .trim()
-        .escape()
-        .notEmpty()
-        .matches(/^(music|sports|reading|travelling|cooking|other)$/),
-    body('about')
-        .trim()
-        .escape()
-        .notEmpty(),
-    body('responseTime')
-        .trim()
-        .escape()
-        .notEmpty()
-        .matches(/^(within an hour|within a few hours|within a day|within a few days|within a week|within a few weeks|within a month|within a few months|within a year|within a few years|other)$/),
-    body('neighbourhood')
-        .trim()
-        .escape()
-        .notEmpty(),
-    body('responseRate')
-        .trim()
-        .escape()
-        .notEmpty()
-        .isNumeric(),
-    body('image')
-        .trim()
-        .escape()
-        .notEmpty(),
+    
 ];
     
     export const signInValidation = [
