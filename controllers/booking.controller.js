@@ -135,7 +135,7 @@ export const getPropertyBookings = async (req, res, next) => {
       booking.populate('property')));
    
     const bookingsWithProperty = await Promise.all(bookings.map(booking=>booking.property.populate('images')));
-    await Promise.all(bookings.map(booking=>booking.populate('guest')));
+    await Promise.all(bookings.map(booking=>booking.populate('customer')));
 
     res.status(200).json(bookings);
   } catch (error) {
